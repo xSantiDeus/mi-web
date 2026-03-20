@@ -21,8 +21,6 @@ body {
   to {opacity: 1;}
 }
 
-h1 { margin-bottom: 5px; }
-
 .box {
   background: #f5f5f5;
   padding: 20px;
@@ -43,10 +41,7 @@ button {
 }
 
 button:hover { background: #333; }
-
 button:active { transform: scale(0.95); }
-
-input { margin: 10px; }
 
 .tool-btn {
   background: #ddd;
@@ -57,8 +52,6 @@ input { margin: 10px; }
   background: #111;
   color: white;
 }
-
-#loader { display: none; }
 
 .spinner {
   margin: 10px auto;
@@ -110,7 +103,7 @@ img {
 
   <button onclick="processImage()">Procesar</button>
 
-  <!-- 💸 ANUNCIO (MEJOR UBICACIÓN) -->
+  <!-- 💸 ANUNCIO 1 -->
   <div class="ad">
     <script>
       atOptions = {
@@ -124,12 +117,26 @@ img {
     <script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
   </div>
 
-  <div id="loader">
+  <div id="loader" style="display:none;">
     <p>Procesando imagen...</p>
     <div class="spinner"></div>
   </div>
 
   <div id="sizes"></div>
+
+  <!-- 💸 ANUNCIO 2 (aparece después) -->
+  <div id="adAfter" class="ad" style="display:none;">
+    <script>
+      atOptions = {
+        'key' : '46e2b33f37a945adc75d8f6d886bc5b8',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
+  </div>
 
   <button id="downloadBtn" style="display:none;">⬇ Descargar imagen</button>
 
@@ -214,6 +221,9 @@ function processImage() {
         `Original: ${originalSize} KB → Nuevo: ${newSize} KB`;
 
       document.getElementById("downloadBtn").style.display = "inline-block";
+
+      // 🔥 mostrar anuncio después del resultado
+      document.getElementById("adAfter").style.display = "block";
     };
   };
 
