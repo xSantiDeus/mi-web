@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>PandaToolkit</title>
 
+<meta name="description" content="Comprimir imágenes online gratis sin perder calidad. Reduce el tamaño de tus fotos rápido y fácil.">
+
 <style>
 body {
   font-family: Arial;
@@ -19,9 +21,7 @@ body {
   to {opacity: 1;}
 }
 
-h1 {
-  margin-bottom: 5px;
-}
+h1 { margin-bottom: 5px; }
 
 .box {
   background: #f5f5f5;
@@ -42,13 +42,11 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #333;
-}
+button:hover { background: #333; }
 
-input {
-  margin: 10px;
-}
+button:active { transform: scale(0.95); }
+
+input { margin: 10px; }
 
 .tool-btn {
   background: #ddd;
@@ -60,17 +58,35 @@ input {
   color: white;
 }
 
-#loader {
-  display: none;
-  margin-top: 10px;
+#loader { display: none; }
+
+.spinner {
+  margin: 10px auto;
+  width: 30px;
+  height: 30px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #111;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+img {
+  margin-top: 15px;
+  max-width: 100%;
+  border-radius: 8px;
 }
 
 .ad {
-  margin: 20px auto;
-  padding: 15px;
-  background: #eee;
-  max-width: 350px;
-  font-size: 14px;
+  margin: 15px auto;
+}
+
+@media (max-width: 500px) {
+  .box { width: 90%; }
+  button { width: 100%; }
 }
 </style>
 </head>
@@ -79,8 +95,6 @@ input {
 
 <h1>🐼 PandaToolkit</h1>
 <p>Herramientas rápidas para imágenes</p>
-
-<div class="ad">[ ANUNCIO ARRIBA ]</div>
 
 <div class="box">
 
@@ -96,17 +110,32 @@ input {
 
   <button onclick="processImage()">Procesar</button>
 
-  <div id="loader">Procesando...</div>
+  <!-- 💸 ANUNCIO (MEJOR UBICACIÓN) -->
+  <div class="ad">
+    <script>
+      atOptions = {
+        'key' : '46e2b33f37a945adc75d8f6d886bc5b8',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
+  </div>
+
+  <div id="loader">
+    <p>Procesando imagen...</p>
+    <div class="spinner"></div>
+  </div>
 
   <div id="sizes"></div>
 
-  <button id="downloadBtn" style="display:none;">Descargar</button>
+  <button id="downloadBtn" style="display:none;">⬇ Descargar imagen</button>
 
   <img id="preview">
 
 </div>
-
-<div class="ad">[ ANUNCIO ABAJO ]</div>
 
 <script>
 let currentTool = "compress";
@@ -121,9 +150,7 @@ function setTool(tool) {
   const controls = document.getElementById("extraControls");
 
   if (tool === "compress") {
-    controls.innerHTML = `
-      Calidad: <input type="range" id="quality" min="10" max="100" value="70">
-    `;
+    controls.innerHTML = `Calidad: <input type="range" id="quality" min="10" max="100" value="70">`;
   }
 
   if (tool === "resize") {
@@ -178,7 +205,6 @@ function processImage() {
       resultData = canvas.toDataURL("image/jpeg", quality);
 
       document.getElementById("preview").src = resultData;
-
       document.getElementById("loader").style.display = "none";
 
       const originalSize = (file.size / 1024).toFixed(2);
@@ -187,8 +213,7 @@ function processImage() {
       document.getElementById("sizes").innerText =
         `Original: ${originalSize} KB → Nuevo: ${newSize} KB`;
 
-      const btn = document.getElementById("downloadBtn");
-      btn.style.display = "inline-block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
     };
   };
 
