@@ -13,24 +13,32 @@
     }
     .box {
       background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 25px;
+      border-radius: 12px;
       display: inline-block;
+      max-width: 400px;
     }
     input, button {
       margin: 10px;
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
     }
     button {
       background: #22c55e;
       color: white;
       cursor: pointer;
+      font-weight: bold;
     }
     img {
       margin-top: 20px;
-      max-width: 300px;
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .info {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #cbd5f5;
     }
   </style>
 </head>
@@ -40,16 +48,30 @@
   <p>Reducí el peso de tu imagen sin perder calidad</p>
 
   <div class="box">
-    <input type="file" id="imageInput">
-    <br>
-    <button onclick="compressImage()">Comprimir</button>
-    <br>
-    <a id="downloadLink" style="display:none;" download="imagen-comprimida.jpg">Descargar imagen</a>
-    <br>
+    <input type="file" id="imageInput"><br>
+
+    <label>Calidad: <span id="qualityValue">60</span>%</label><br>
+    <input type="range" min="10" max="100" value="60" id="qualitySlider"><br>
+
+    <button onclick="compressImage()">Comprimir</button><br>
+
+    <div class="info" id="sizes"></div>
+
+    <a id="downloadLink" style="display:none;" download="imagen-comprimida.jpg">
+      Descargar imagen
+    </a>
+
     <img id="preview">
   </div>
 
   <script>
+    const slider = document.getElementById("qualitySlider");
+    const qualityText = document.getElementById("qualityValue");
+
+    slider.oninput = () => {
+      qualityText.innerText = slider.value;
+    };
+
     function compressImage() {
       const file = document.getElementById("imageInput").files[0];
       if (!file) return alert("Subí una imagen");
@@ -64,21 +86,26 @@
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
 
-          // Reducimos tamaño (ajustable)
           const scale = 0.7;
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
 
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-          // Comprimir calidad (0 a 1)
-          const compressedData = canvas.toDataURL("image/jpeg", 0.6);
+          const quality = slider.value / 100;
+          const compressedData = canvas.toDataURL("image/jpeg", quality);
 
           document.getElementById("preview").src = compressedData;
 
+          const originalSize = (file.size / 1024).toFixed(2);
+          const compressedSize = (compressedData.length / 1024).toFixed(2);
+
+          document.getElementById("sizes").innerText =
+            "Original: " + originalSize + " KB | Comprimido: " + compressedSize + " KB";
+
           const link = document.getElementById("downloadLink");
           link.href = compressedData;
-          link.style.display = "inline";
+          link.style.display = "inline-block";
         }
       };
 
