@@ -1,151 +1,207 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>PandaCompress - Comprimir imagen</title>
+<meta charset="UTF-8">
+<title>PandaToolkit</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #111;
-      text-align: center;
-      padding: 40px;
-    }
+<style>
+body {
+  font-family: Arial;
+  background: #fff;
+  color: #111;
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.8s ease;
+}
 
-    h1 {
-      font-size: 32px;
-    }
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
 
-    .box {
-      background: #f5f5f5;
-      padding: 25px;
-      border-radius: 12px;
-      display: inline-block;
-      width: 320px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
+h1 {
+  margin-bottom: 5px;
+}
 
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
+.box {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 350px;
+  margin: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
 
-    button {
-      background: #111;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
+button {
+  background: #111;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  margin: 8px;
+  cursor: pointer;
+}
 
-    button:hover {
-      background: #333;
-    }
+button:hover {
+  background: #333;
+}
 
-    input[type="range"] {
-      width: 100%;
-    }
+input {
+  margin: 10px;
+}
 
-    .info {
-      font-size: 14px;
-      margin-top: 10px;
-    }
+.tool-btn {
+  background: #ddd;
+  color: #111;
+}
 
-    img {
-      margin-top: 15px;
-      max-width: 100%;
-      border-radius: 8px;
-    }
+.tool-btn.active {
+  background: #111;
+  color: white;
+}
 
-    .logo {
-      font-size: 40px;
-    }
-  </style>
+#loader {
+  display: none;
+  margin-top: 10px;
+}
+
+.ad {
+  margin: 20px auto;
+  padding: 15px;
+  background: #eee;
+  max-width: 350px;
+  font-size: 14px;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="logo">🐼</div>
-  <h1>PandaCompress</h1>
-  <p>Reducí el peso de tu imagen fácil y rápido</p>
+<h1>🐼 PandaToolkit</h1>
+<p>Herramientas rápidas para imágenes</p>
 
-  <div class="box">
+<div class="ad">[ ANUNCIO ARRIBA ]</div>
 
-    <input type="file" id="imageInput"><br>
+<div class="box">
 
-    <label>Calidad: <span id="qualityValue">80</span>%</label>
-    <input type="range" min="10" max="100" value="80" id="qualitySlider">
-
-    <button onclick="compressImage()">Comprimir</button>
-
-    <div class="info" id="sizes"></div>
-
-    <button id="downloadBtn" style="display:none;">
-  ⬇ Descargar imagen
-</button>
-
-    <img id="preview">
-
+  <div>
+    <button class="tool-btn active" onclick="setTool('compress')">Comprimir</button>
+    <button class="tool-btn" onclick="setTool('convert')">JPG</button>
+    <button class="tool-btn" onclick="setTool('resize')">Resize</button>
   </div>
 
-  <script>
-    const slider = document.getElementById("qualitySlider");
-    const qualityText = document.getElementById("qualityValue");
+  <input type="file" id="imageInput"><br>
 
-    // Esto arregla la barra
-    slider.addEventListener("input", () => {
-      qualityText.innerText = slider.value;
-    });
+  <div id="extraControls"></div>
 
-    function compressImage() {
-      const file = document.getElementById("imageInput").files[0];
-      if (!file) return alert("Subí una imagen");
+  <button onclick="processImage()">Procesar</button>
 
-      const reader = new FileReader();
+  <div id="loader">Procesando...</div>
 
-      reader.onload = function(event) {
-        const img = new Image();
-        img.src = event.target.result;
+  <div id="sizes"></div>
 
-        img.onload = function() {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+  <button id="downloadBtn" style="display:none;">Descargar</button>
 
-          const scale = 0.7;
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
+  <img id="preview">
 
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+</div>
 
-          const quality = slider.value / 100;
-          const compressedData = canvas.toDataURL("image/jpeg", quality);
+<div class="ad">[ ANUNCIO ABAJO ]</div>
 
-          document.getElementById("preview").src = compressedData;
+<script>
+let currentTool = "compress";
+let resultData = "";
 
-          const originalSize = (file.size / 1024).toFixed(2);
-          const compressedSize = (compressedData.length / 1024).toFixed(2);
+function setTool(tool) {
+  currentTool = tool;
 
-          document.getElementById("sizes").innerText =
-            `Original: ${originalSize} KB → Comprimido: ${compressedSize} KB`;
+  document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
 
-          const btn = document.getElementById("downloadBtn");
+  const controls = document.getElementById("extraControls");
 
-btn.onclick = () => {
+  if (tool === "compress") {
+    controls.innerHTML = `
+      Calidad: <input type="range" id="quality" min="10" max="100" value="70">
+    `;
+  }
+
+  if (tool === "resize") {
+    controls.innerHTML = `
+      Ancho: <input type="number" id="width" value="300"><br>
+      Alto: <input type="number" id="height" value="300">
+    `;
+  }
+
+  if (tool === "convert") {
+    controls.innerHTML = `Convertir a JPG automáticamente`;
+  }
+}
+
+setTool("compress");
+
+function processImage() {
+  const file = document.getElementById("imageInput").files[0];
+  if (!file) return alert("Subí una imagen");
+
+  document.getElementById("loader").style.display = "block";
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      let width = img.width;
+      let height = img.height;
+
+      if (currentTool === "resize") {
+        width = document.getElementById("width").value;
+        height = document.getElementById("height").value;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      let quality = 0.7;
+
+      if (currentTool === "compress") {
+        quality = document.getElementById("quality").value / 100;
+      }
+
+      resultData = canvas.toDataURL("image/jpeg", quality);
+
+      document.getElementById("preview").src = resultData;
+
+      document.getElementById("loader").style.display = "none";
+
+      const originalSize = (file.size / 1024).toFixed(2);
+      const newSize = (resultData.length / 1024).toFixed(2);
+
+      document.getElementById("sizes").innerText =
+        `Original: ${originalSize} KB → Nuevo: ${newSize} KB`;
+
+      const btn = document.getElementById("downloadBtn");
+      btn.style.display = "inline-block";
+    };
+  };
+
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("downloadBtn").onclick = () => {
   const a = document.createElement("a");
-  a.href = compressedData;
-  a.download = "imagen-comprimida.jpg";
+  a.href = resultData;
+  a.download = "imagen.jpg";
   a.click();
 };
-
-btn.style.display = "inline-block";
-        }
-      };
-
-      reader.readAsDataURL(file);
-    }
-  </script>
+</script>
 
 </body>
 </html>
