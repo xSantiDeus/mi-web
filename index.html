@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Quitar fondo de imagen gratis</title>
+  <title>Comprimir imagen online gratis</title>
   <style>
     body {
       font-family: Arial;
@@ -36,47 +36,53 @@
 </head>
 <body>
 
-  <h1>Quitar fondo de imagen</h1>
-  <p>Subí tu imagen y eliminá el fondo gratis</p>
+  <h1>Comprimir imagen</h1>
+  <p>Reducí el peso de tu imagen sin perder calidad</p>
 
   <div class="box">
     <input type="file" id="imageInput">
     <br>
-    <button onclick="removeBg()">Quitar fondo</button>
+    <button onclick="compressImage()">Comprimir</button>
     <br>
-    <img id="result">
+    <a id="downloadLink" style="display:none;" download="imagen-comprimida.jpg">Descargar imagen</a>
+    <br>
+    <img id="preview">
   </div>
 
   <script>
-    async function removeBg() {
+    function compressImage() {
       const file = document.getElementById("imageInput").files[0];
       if (!file) return alert("Subí una imagen");
 
-      const formData = new FormData();
-      formData.append("file", file);
+      const reader = new FileReader();
 
-      try {
-        const response = await fetch("https://api.slazzer.com/v2.0/remove_image_background", {
-          method: "POST",
-          headers: {
-            "API-KEY": "free"
-          },
-          body: formData
-        });
+      reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
 
-        if (!response.ok) {
-          alert("Error al procesar la imagen");
-          return;
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // Reducimos tamaño (ajustable)
+          const scale = 0.7;
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Comprimir calidad (0 a 1)
+          const compressedData = canvas.toDataURL("image/jpeg", 0.6);
+
+          document.getElementById("preview").src = compressedData;
+
+          const link = document.getElementById("downloadLink");
+          link.href = compressedData;
+          link.style.display = "inline";
         }
+      };
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-
-        document.getElementById("result").src = url;
-
-      } catch (error) {
-        alert("Error de conexión");
-      }
+      reader.readAsDataURL(file);
     }
   </script>
 
