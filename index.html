@@ -82,9 +82,9 @@
 
     <div class="info" id="sizes"></div>
 
-    <a id="downloadLink" style="display:none;" download="imagen-comprimida.jpg">
-      ⬇ Descargar imagen
-    </a>
+    <button id="downloadBtn" style="display:none;">
+  ⬇ Descargar imagen
+</button>
 
     <img id="preview">
 
@@ -130,9 +130,16 @@
           document.getElementById("sizes").innerText =
             `Original: ${originalSize} KB → Comprimido: ${compressedSize} KB`;
 
-          const link = document.getElementById("downloadLink");
-          link.href = compressedData;
-          link.style.display = "block";
+          const btn = document.getElementById("downloadBtn");
+
+btn.onclick = () => {
+  const a = document.createElement("a");
+  a.href = compressedData;
+  a.download = "imagen-comprimida.jpg";
+  a.click();
+};
+
+btn.style.display = "inline-block";
         }
       };
 
