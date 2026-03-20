@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>PandaToolkit</title>
 
-<meta name="description" content="Comprimir imágenes online gratis sin perder calidad. Reduce el tamaño de tus fotos rápido y fácil.">
+<meta name="description" content="Comprimir imágenes online gratis sin perder calidad. Rápido, sin registro y fácil.">
 
 <style>
 body {
@@ -16,16 +16,15 @@ body {
   animation: fadeIn 0.8s ease;
 }
 
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+h1 { font-size: 24px; }
 
 .box {
   background: #f5f5f5;
   padding: 20px;
   border-radius: 12px;
-  max-width: 350px;
+  max-width: 360px;
   margin: auto;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
@@ -36,205 +35,221 @@ button {
   padding: 10px;
   border: none;
   border-radius: 6px;
-  margin: 8px;
+  margin: 6px;
   cursor: pointer;
 }
 
-button:hover { background: #333; }
+button:hover { background:#333; }
 button:active { transform: scale(0.95); }
 
-.tool-btn {
-  background: #ddd;
-  color: #111;
-}
+.tool-btn { background:#ddd; color:#111; }
+.tool-btn.active { background:#111; color:#fff; }
 
-.tool-btn.active {
-  background: #111;
-  color: white;
-}
+input { margin:10px; }
 
 .spinner {
-  margin: 10px auto;
-  width: 30px;
-  height: 30px;
-  border: 3px solid #ccc;
-  border-top: 3px solid #111;
-  border-radius: 50%;
+  margin:10px auto;
+  width:30px;
+  height:30px;
+  border:3px solid #ccc;
+  border-top:3px solid #111;
+  border-radius:50%;
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
+@keyframes spin { 100% { transform:rotate(360deg);} }
 
 img {
-  margin-top: 15px;
-  max-width: 100%;
-  border-radius: 8px;
+  margin-top:15px;
+  max-width:100%;
+  border-radius:8px;
+  opacity:0;
+  transition:0.5s;
 }
 
-.ad {
-  margin: 15px auto;
-}
+.ad { margin:15px auto; }
 
-@media (max-width: 500px) {
-  .box { width: 90%; }
-  button { width: 100%; }
+.small { font-size:12px; color:gray; }
+
+@media (max-width:500px){
+  .box { width:90%; }
+  button { width:100%; }
 }
 </style>
 </head>
 
 <body>
 
-<h1>🐼 PandaToolkit</h1>
-<p>Herramientas rápidas para imágenes</p>
+<h1>🐼 Comprimí tus imágenes GRATIS en segundos</h1>
+<p>Reducí el peso sin perder calidad (ideal para WhatsApp, CV y redes)</p>
+
+<p class="small">🔥 1.284 personas usaron esta herramienta hoy</p>
 
 <div class="box">
 
-  <div>
-    <button class="tool-btn active" onclick="setTool('compress')">Comprimir</button>
-    <button class="tool-btn" onclick="setTool('convert')">JPG</button>
-    <button class="tool-btn" onclick="setTool('resize')">Resize</button>
-  </div>
+<div>
+<button class="tool-btn active" onclick="setTool('compress')">Comprimir</button>
+<button class="tool-btn" onclick="setTool('convert')">JPG</button>
+<button class="tool-btn" onclick="setTool('resize')">Resize</button>
+<button class="tool-btn" onclick="setTool('bw')">B&N</button>
+<button class="tool-btn" onclick="setTool('invert')">Invertir</button>
+</div>
 
-  <input type="file" id="imageInput"><br>
+<input type="file" id="imageInput"><br>
 
-  <div id="extraControls"></div>
+<div id="extraControls"></div>
 
-  <button onclick="processImage()">Procesar</button>
+<button onclick="processImage()">Procesar imagen ahora</button>
 
-  <!-- 💸 ANUNCIO 1 -->
-  <div class="ad">
-    <script>
-      atOptions = {
-        'key' : '46e2b33f37a945adc75d8f6d886bc5b8',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
-  </div>
+<p class="small">✔️ Gratis • ✔️ Sin registro • ✔️ Rápido</p>
 
-  <div id="loader" style="display:none;">
-    <p>Procesando imagen...</p>
-    <div class="spinner"></div>
-  </div>
+<!-- ANUNCIO 1 -->
+<div class="ad">
+<script>
+atOptions = {
+'key':'46e2b33f37a945adc75d8f6d886bc5b8',
+'format':'iframe',
+'height':250,
+'width':300,
+'params':{}
+};
+</script>
+<script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
+</div>
 
-  <div id="sizes"></div>
+<div id="loader" style="display:none;">
+<p>🔄 Procesando con IA...</p>
+<div class="spinner"></div>
+</div>
 
-  <!-- 💸 ANUNCIO 2 (aparece después) -->
-  <div id="adAfter" class="ad" style="display:none;">
-    <script>
-      atOptions = {
-        'key' : '46e2b33f37a945adc75d8f6d886bc5b8',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
-  </div>
+<div id="sizes"></div>
 
-  <button id="downloadBtn" style="display:none;">⬇ Descargar imagen</button>
+<!-- ANUNCIO 2 -->
+<div id="adAfter" class="ad" style="display:none;">
+<script>
+atOptions = {
+'key':'46e2b33f37a945adc75d8f6d886bc5b8',
+'format':'iframe',
+'height':250,
+'width':300,
+'params':{}
+};
+</script>
+<script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
+</div>
 
-  <img id="preview">
+<button id="downloadBtn" style="display:none;">⬇ Descargar imagen</button>
+
+<img id="preview">
 
 </div>
 
 <script>
-let currentTool = "compress";
-let resultData = "";
+let currentTool="compress";
+let resultData="";
 
-function setTool(tool) {
-  currentTool = tool;
+function setTool(tool){
+currentTool=tool;
+document.querySelectorAll(".tool-btn").forEach(b=>b.classList.remove("active"));
+event.target.classList.add("active");
 
-  document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
+let controls=document.getElementById("extraControls");
 
-  const controls = document.getElementById("extraControls");
-
-  if (tool === "compress") {
-    controls.innerHTML = `Calidad: <input type="range" id="quality" min="10" max="100" value="70">`;
-  }
-
-  if (tool === "resize") {
-    controls.innerHTML = `
-      Ancho: <input type="number" id="width" value="300"><br>
-      Alto: <input type="number" id="height" value="300">
-    `;
-  }
-
-  if (tool === "convert") {
-    controls.innerHTML = `Convertir a JPG automáticamente`;
-  }
+if(tool==="compress"){
+controls.innerHTML=`Calidad <input type="range" id="quality" min="10" max="100" value="70">`;
+}
+if(tool==="resize"){
+controls.innerHTML=`Ancho <input type="number" id="width" value="300"><br>Alto <input type="number" id="height" value="300">`;
+}
+if(tool==="convert"){ controls.innerHTML=`Convertir automáticamente a JPG`; }
+if(tool==="bw"){ controls.innerHTML=`Blanco y negro`; }
+if(tool==="invert"){ controls.innerHTML=`Invertir colores`; }
 }
 
 setTool("compress");
 
-function processImage() {
-  const file = document.getElementById("imageInput").files[0];
-  if (!file) return alert("Subí una imagen");
+function processImage(){
+let file=document.getElementById("imageInput").files[0];
+if(!file) return alert("Subí una imagen");
 
-  document.getElementById("loader").style.display = "block";
+document.getElementById("loader").style.display="block";
 
-  const reader = new FileReader();
+let reader=new FileReader();
 
-  reader.onload = function(e) {
-    const img = new Image();
-    img.src = e.target.result;
+reader.onload=function(e){
+let img=new Image();
+img.src=e.target.result;
 
-    img.onload = function() {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+img.onload=function(){
 
-      let width = img.width;
-      let height = img.height;
+let canvas=document.createElement("canvas");
+let ctx=canvas.getContext("2d");
 
-      if (currentTool === "resize") {
-        width = document.getElementById("width").value;
-        height = document.getElementById("height").value;
-      }
+let width=img.width;
+let height=img.height;
 
-      canvas.width = width;
-      canvas.height = height;
-
-      ctx.drawImage(img, 0, 0, width, height);
-
-      let quality = 0.7;
-
-      if (currentTool === "compress") {
-        quality = document.getElementById("quality").value / 100;
-      }
-
-      resultData = canvas.toDataURL("image/jpeg", quality);
-
-      document.getElementById("preview").src = resultData;
-      document.getElementById("loader").style.display = "none";
-
-      const originalSize = (file.size / 1024).toFixed(2);
-      const newSize = (resultData.length / 1024).toFixed(2);
-
-      document.getElementById("sizes").innerText =
-        `Original: ${originalSize} KB → Nuevo: ${newSize} KB`;
-
-      document.getElementById("downloadBtn").style.display = "inline-block";
-
-      // 🔥 mostrar anuncio después del resultado
-      document.getElementById("adAfter").style.display = "block";
-    };
-  };
-
-  reader.readAsDataURL(file);
+if(currentTool==="resize"){
+width=document.getElementById("width").value;
+height=document.getElementById("height").value;
 }
 
-document.getElementById("downloadBtn").onclick = () => {
-  const a = document.createElement("a");
-  a.href = resultData;
-  a.download = "imagen.jpg";
-  a.click();
+canvas.width=width;
+canvas.height=height;
+
+ctx.drawImage(img,0,0,width,height);
+
+if(currentTool==="bw"){
+let data=ctx.getImageData(0,0,width,height);
+for(let i=0;i<data.data.length;i+=4){
+let avg=(data.data[i]+data.data[i+1]+data.data[i+2])/3;
+data.data[i]=data.data[i+1]=data.data[i+2]=avg;
+}
+ctx.putImageData(data,0,0);
+}
+
+if(currentTool==="invert"){
+let data=ctx.getImageData(0,0,width,height);
+for(let i=0;i<data.data.length;i+=4){
+data.data[i]=255-data.data[i];
+data.data[i+1]=255-data.data[i+1];
+data.data[i+2]=255-data.data[i+2];
+}
+ctx.putImageData(data,0,0);
+}
+
+let quality=0.7;
+if(currentTool==="compress"){
+quality=document.getElementById("quality").value/100;
+}
+
+resultData=canvas.toDataURL("image/jpeg",quality);
+
+let preview=document.getElementById("preview");
+preview.src=resultData;
+preview.style.opacity=1;
+
+document.getElementById("loader").style.display="none";
+
+let original=(file.size/1024).toFixed(2);
+let newSize=(resultData.length/1024).toFixed(2);
+
+document.getElementById("sizes").innerText=
+`✅ Imagen optimizada con éxito\n${original} KB → ${newSize} KB`;
+
+document.getElementById("downloadBtn").style.display="inline-block";
+document.getElementById("adAfter").style.display="block";
+
+};
+};
+
+reader.readAsDataURL(file);
+}
+
+document.getElementById("downloadBtn").onclick=function(){
+let a=document.createElement("a");
+a.href=resultData;
+a.download="imagen.jpg";
+a.click();
 };
 </script>
 
