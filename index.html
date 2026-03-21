@@ -2,232 +2,164 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>PandaToolkit</title>
-
-<meta name="description" content="Comprimir imágenes online gratis sin perder calidad. Rápido, sin registro y fácil.">
-
+<title>PandaToolkit PRO MAX</title>
+<meta name="description" content="Optimiza múltiples imágenes online gratis para web. Comprime, convierte y ajusta resolución automáticamente.">
 <style>
-body {
-  font-family: Arial;
-  background: #fff;
-  color: #111;
-  text-align: center;
-  padding: 20px;
-}
-
-.box {
-  background: #f5f5f5;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 360px;
-  margin: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-button {
-  background: #111;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  margin: 6px;
-  cursor: pointer;
-}
-
-button:hover { background:#333; }
-button:active { transform: scale(0.95); }
-
-.tool-btn { background:#ddd; color:#111; }
-.tool-btn.active { background:#111; color:#fff; }
-
-.spinner {
-  margin:10px auto;
-  width:30px;
-  height:30px;
-  border:3px solid #ccc;
-  border-top:3px solid #111;
-  border-radius:50%;
-  animation: spin 1s linear infinite;
-}
-
+body { font-family: Arial; background:#fff; color:#111; text-align:center; padding:20px; }
+.box { background:#f5f5f5; padding:20px; border-radius:12px; max-width:520px; margin:auto; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+button { background:#111; color:white; padding:10px; border:none; border-radius:6px; margin:6px; cursor:pointer; }
+button:hover { background:#333; } button:active { transform:scale(0.95); }
+.tool-btn { background:#ddd; color:#111; } .tool-btn.active { background:#111; color:#fff; }
+.spinner { margin:10px auto; width:30px; height:30px; border:3px solid #ccc; border-top:3px solid #111; border-radius:50%; animation:spin 1s linear infinite; }
 @keyframes spin { 100% { transform:rotate(360deg);} }
-
-img {
-  margin-top:15px;
-  max-width:100%;
-  border-radius:8px;
-  opacity:0;
-  transition:0.3s;
-}
-
+img { margin-top:15px; max-width:100%; border-radius:8px; opacity:0; transition:0.3s; }
 .ad { margin:15px auto; }
-
 .small { font-size:12px; color:gray; }
-
-@media (max-width:500px){
-  .box { width:90%; }
-  button { width:100%; }
-}
+input[type=range], input[type=number] { margin:6px 0; width:90%; }
+#progressBar { width:100%; background:#ddd; border-radius:8px; margin-top:10px; display:none; }
+#progress { width:0%; height:8px; background:#111; border-radius:8px; }
+#dropArea { border:2px dashed #111; padding:20px; border-radius:12px; margin:10px 0; cursor:pointer; transition:background 0.2s; }
+#dropArea.hover { background:#eee; }
+#history { margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.history-item { width:80px; cursor:pointer; position:relative; }
+.history-item img { width:100%; border-radius:6px; border:1px solid #ccc; }
+.history-item .download-btn { position:absolute; bottom:2px; right:2px; font-size:10px; background:#111; color:white; border:none; border-radius:4px; padding:2px 4px; cursor:pointer; }
+@media(max-width:500px){ .box { width:95%; } button { width:100%; } #history { justify-content:center; } }
 </style>
 </head>
-
 <body>
 
-<h1>🐼 Comprimí tus imágenes GRATIS en segundos</h1>
-<p>Reducí el peso sin perder calidad</p>
-<p class="small">🔥 1.284 personas usaron esta herramienta hoy</p>
+<h1>🐼 PandaToolkit PRO MAX</h1>
+<p>Optimiza múltiples imágenes automáticamente para web</p>
+<p class="small">🔥 Miles de usuarios ya lo usan</p>
 
 <div class="box">
-
 <div>
-<button class="tool-btn active" onclick="setTool('compress')">Comprimir</button>
-<button class="tool-btn" onclick="setTool('convert')">JPG</button>
-<button class="tool-btn" onclick="setTool('resize')">Resize</button>
-<button class="tool-btn" onclick="setTool('bw')">B&N</button>
-<button class="tool-btn" onclick="setTool('invert')">Invertir</button>
+<button class="tool-btn active" onclick="setTool('compress', event)">Comprimir</button>
+<button class="tool-btn" onclick="setTool('convert', event)">JPG</button>
+<button class="tool-btn" onclick="setTool('resize', event)">Resize</button>
+<button class="tool-btn" onclick="setTool('bw', event)">B&N</button>
+<button class="tool-btn" onclick="setTool('invert', event)">Invertir</button>
+<button onclick="autoOptimizeAll()">✨ Optimizar todas para Web</button>
 </div>
 
-<input type="file" id="imageInput"><br>
+<div id="dropArea">Arrastrá y soltá tus imágenes aquí o hacé click</div>
+<input type="file" id="imageInput" style="display:none;" multiple>
 
 <div id="extraControls"></div>
-
-<button onclick="processImage()">Procesar imagen ahora</button>
+<div id="progressBar"><div id="progress"></div></div>
 
 <p class="small">✔️ Gratis • ✔️ Sin registro • ✔️ Rápido</p>
+<div class="ad" id="adContainer"></div>
 
-<!-- 💸 ANUNCIO ÚNICO -->
-<div class="ad">
-<script>
-atOptions = {
-'key':'46e2b33f37a945adc75d8f6d886bc5b8',
-'format':'iframe',
-'height':250,
-'width':300,
-'params':{}
-};
-</script>
-<script src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"></script>
-</div>
-
-<div id="loader" style="display:none;">
-<p>Procesando imagen...</p>
-<div class="spinner"></div>
-</div>
-
+<div id="loader" style="display:none;"><p>Procesando imágenes...</p><div class="spinner"></div></div>
 <div id="sizes"></div>
-
-<button id="downloadBtn" style="display:none;">⬇ Descargar imagen</button>
-
 <img id="preview">
-
+<div id="history"></div>
 </div>
 
 <script>
 let currentTool="compress";
-let resultData="";
-
-function setTool(tool){
-currentTool=tool;
-document.querySelectorAll(".tool-btn").forEach(b=>b.classList.remove("active"));
-event.target.classList.add("active");
-
-let controls=document.getElementById("extraControls");
-
-if(tool==="compress"){
-controls.innerHTML=`Calidad <input type="range" id="quality" min="10" max="100" value="70">`;
-}
-if(tool==="resize"){
-controls.innerHTML=`Ancho <input type="number" id="width" value="300"><br>Alto <input type="number" id="height" value="300">`;
-}
-if(tool==="convert"){ controls.innerHTML=`Convertir automáticamente a JPG`; }
-if(tool==="bw"){ controls.innerHTML=`Blanco y negro`; }
-if(tool==="invert"){ controls.innerHTML=`Invertir colores`; }
-}
-
-setTool("compress");
-
-function processImage(){
-let file=document.getElementById("imageInput").files[0];
-if(!file) return alert("Subí una imagen");
-
-const loader=document.getElementById("loader");
-loader.style.display="block";
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-let img=new Image();
-img.src=e.target.result;
-
-img.onload=function(){
-
+let uploadedImgs=[]; // array de imágenes cargadas
+let resultDatas=[]; // array de resultados
 let canvas=document.createElement("canvas");
 let ctx=canvas.getContext("2d");
 
-let width=img.width;
-let height=img.height;
-
-if(currentTool==="resize"){
-width=document.getElementById("width").value;
-height=document.getElementById("height").value;
+function setTool(tool,e){
+  currentTool=tool;
+  document.querySelectorAll(".tool-btn").forEach(b=>b.classList.remove("active"));
+  if(e)e.target.classList.add("active");
+  let controls=document.getElementById("extraControls"); controls.innerHTML="";
+  if(tool==="compress") controls.innerHTML=`Calidad <input type="range" id="quality" min="10" max="100" value="70" oninput="updatePreviewSingle()">`;
+  else if(tool==="resize") controls.innerHTML=`Ancho <input type="number" id="width" value="300" oninput="updatePreviewSingle()"><br>Alto <input type="number" id="height" value="300" oninput="updatePreviewSingle()">`;
+  else if(tool==="convert") controls.innerHTML=`Convertir automáticamente a JPG`;
+  else if(tool==="bw") controls.innerHTML=`Blanco y negro`;
+  else if(tool==="invert") controls.innerHTML=`Invertir colores`;
+  updatePreviewSingle();
 }
 
-canvas.width=width;
-canvas.height=height;
+// Drag & Drop y selección múltiple
+let dropArea=document.getElementById("dropArea");
+dropArea.addEventListener("click",()=>document.getElementById("imageInput").click());
+dropArea.addEventListener("dragover", e=>{ e.preventDefault(); dropArea.classList.add("hover"); });
+dropArea.addEventListener("dragleave", e=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
+dropArea.addEventListener("drop", e=>{ e.preventDefault(); dropArea.classList.remove("hover"); handleFiles(e.dataTransfer.files); });
+document.getElementById("imageInput").addEventListener("change", function(){ handleFiles(this.files); });
 
-ctx.drawImage(img,0,0,width,height);
-
-if(currentTool==="bw"){
-let data=ctx.getImageData(0,0,width,height);
-for(let i=0;i<data.data.length;i+=4){
-let avg=(data.data[i]+data.data[i+1]+data.data[i+2])/3;
-data.data[i]=data.data[i+1]=data.data[i+2]=avg;
-}
-ctx.putImageData(data,0,0);
-}
-
-if(currentTool==="invert"){
-let data=ctx.getImageData(0,0,width,height);
-for(let i=0;i<data.data.length;i+=4){
-data.data[i]=255-data.data[i];
-data.data[i+1]=255-data.data[i+1];
-data.data[i+2]=255-data.data[i+2];
-}
-ctx.putImageData(data,0,0);
+function handleFiles(files){
+  for(let i=0;i<files.length;i++){
+    let file=files[i];
+    if(!file) continue;
+    const reader=new FileReader();
+    reader.onload=function(e){
+      let img=new Image(); img.src=e.target.result;
+      img.onload=function(){ uploadedImgs.push(img); updatePreviewSingle(); };
+    }
+    reader.readAsDataURL(file);
+  }
 }
 
-let quality=0.7;
-if(currentTool==="compress"){
-quality=document.getElementById("quality").value/100;
+// Preview individual
+function updatePreviewSingle(index=0){
+  if(uploadedImgs.length===0) return;
+  let img=uploadedImgs[index];
+  let width=img.width; let height=img.height;
+  if(currentTool==="resize"){
+    width=parseInt(document.getElementById("width").value)||width;
+    height=parseInt(document.getElementById("height").value)||height;
+  }
+  canvas.width=width; canvas.height=height;
+  ctx.drawImage(img,0,0,width,height);
+  if(currentTool==="bw"||currentTool==="invert"){
+    let data=ctx.getImageData(0,0,width,height);
+    for(let i=0;i<data.data.length;i+=4){
+      if(currentTool==="bw"){ let avg=(data.data[i]+data.data[i+1]+data.data[i+2])/3; data.data[i]=data.data[i+1]=data.data[i+2]=avg; }
+      if(currentTool==="invert"){ data.data[i]=255-data.data[i]; data.data[i+1]=255-data.data[i+1]; data.data[i+2]=255-data.data[i+2]; }
+    }
+    ctx.putImageData(data,0,0);
+  }
+  let quality=0.7; if(currentTool==="compress") quality=document.getElementById("quality").value/100;
+  let mime="image/jpeg"; if(img.src.includes("data:image/png") && currentTool!=="convert"){ mime="image/png"; quality=1; }
+  resultDatas[index]=canvas.toDataURL(mime,quality);
+  let preview=document.getElementById("preview"); preview.src=resultDatas[index]; preview.style.opacity=1;
+  addHistory(resultDatas[index]);
 }
 
-resultData=canvas.toDataURL("image/jpeg",quality);
-
-let preview=document.getElementById("preview");
-preview.src=resultData;
-preview.style.opacity=1;
-
-loader.style.display="none";
-
-let original=(file.size/1024).toFixed(2);
-let newSize=(resultData.length/1024).toFixed(2);
-
-document.getElementById("sizes").innerText=
-`✅ Imagen optimizada con éxito\n${original} KB → ${newSize} KB`;
-
-document.getElementById("downloadBtn").style.display="inline-block";
-
-};
-};
-
-reader.readAsDataURL(file);
+// Historial y descarga
+function addHistory(data){
+  const historyDiv=document.getElementById("history");
+  if(historyDiv.querySelector(`[data-src="${data}"]`)) return;
+  let div=document.createElement("div"); div.classList.add("history-item"); div.dataset.src=data;
+  let img=document.createElement("img"); img.src=data; div.appendChild(img);
+  let btn=document.createElement("button"); btn.innerText="⬇"; btn.classList.add("download-btn"); btn.onclick=()=>{ let a=document.createElement("a"); a.href=data; a.download="imagen.jpg"; a.click(); }; div.appendChild(btn);
+  div.onclick=()=>{ document.getElementById("preview").src=data; };
+  historyDiv.prepend(div);
 }
 
-document.getElementById("downloadBtn").onclick=function(){
-let a=document.createElement("a");
-a.href=resultData;
-a.download="imagen.jpg";
-a.click();
+// Optimización automática por lote
+function autoOptimizeAll(){
+  if(uploadedImgs.length===0) return alert("Subí primero imágenes");
+  let maxWidth=800; let maxHeight=800;
+  let progressBar=document.getElementById("progressBar"); let progress=document.getElementById("progress");
+  progressBar.style.display="block"; progress.style.width="0%";
+  uploadedImgs.forEach((img,i)=>{
+    let ratio=Math.min(maxWidth/img.width,maxHeight/img.height,1);
+    canvas.width=Math.round(img.width*ratio); canvas.height=Math.round(img.height*ratio);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    let quality=0.7; let estSize=(img.src.length/1024);
+    if(estSize>500) quality=0.6; if(estSize>1000) quality=0.5;
+    let data=canvas.toDataURL("image/jpeg",quality);
+    resultDatas[i]=data;
+    addHistory(data);
+    progress.style.width=((i+1)/uploadedImgs.length*100).toFixed(1)+"%";
+    if(i===uploadedImgs.length-1) progressBar.style.display="none";
+  });
+  document.getElementById("preview").src=resultDatas[0]; document.getElementById("preview").style.opacity=1;
+}
+
+// Adsterra
+window.onload=function(){
+  document.getElementById('adContainer').innerHTML='<script type="text/javascript" src="https://www.highperformanceformat.com/46e2b33f37a945adc75d8f6d886bc5b8/invoke.js"><\/script>';
 };
 </script>
 
